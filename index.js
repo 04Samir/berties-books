@@ -1,12 +1,30 @@
 // Import the modules we need
-var express = require ('express')
-var ejs = require('ejs')
-var bodyParser= require ('body-parser')
+const mysql = require('mysql');
+const express = require('express')
+const ejs = require('ejs')
+const bodyParser = require('body-parser')
 
 // Create the express application object
 const app = express()
 const port = 8000
 app.use(bodyParser.urlencoded({ extended: true }))
+
+// Define the database connection
+const db = mysql.createConnection ({
+    host: 'localhost',
+    user: 'appuser',
+    password: 'app2027',
+    database: 'myBookshop'
+});
+// Connect to the database
+db.connect((err) => {
+    if (err) {
+        throw err;
+    }
+    console.log('Connected to database');
+});
+global.db = db;
+
 
 // Set up css
 app.use(express.static(__dirname + '/public'));
@@ -23,7 +41,7 @@ app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 
 // Define our data
-var shopData = {shopName: "Bertie's Books"}
+const shopData = { shopName: "Bertie's Books" }
 
 // Requires the main.js file inside the routes folder passing in the Express app and data as arguments.  All the routes will go in this file
 require("./routes/main")(app, shopData);
