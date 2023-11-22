@@ -1,3 +1,5 @@
+const e = require("express");
+
 module.exports = function (app, shopData) {
 
     // Handle our routes
@@ -11,8 +13,16 @@ module.exports = function (app, shopData) {
         res.render("search.ejs", shopData);
     });
     app.get('/search-result', function (req, res) {
-        //searching in the database
-        res.send("You searched for: " + req.query.keyword);
+        let sqlquery = "SELECT * FROM books WHERE name LIKE '%" + req.query.keyword + "%'"; // query database to get all the books
+        // execute sql query
+        db.query(sqlquery, (err, result) => {
+            if (result.length == 0) {
+                res.send('No results found');
+            }
+            else {
+                res.send(result);
+            }
+         });
     });
     app.get('/register', function (req, res) {
         res.render('register.ejs', shopData);
@@ -28,7 +38,9 @@ module.exports = function (app, shopData) {
             if (err) {
                 res.redirect('./'); 
             }
-            res.send(result)
+            else {
+                res.send(result)
+            }
          });
     });
 
